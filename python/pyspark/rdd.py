@@ -52,7 +52,7 @@ def _extract_concise_traceback():
     first_spark_frame = len(tb) - 1
     for i in range(0, len(tb)):
         file, line, fun, what = tb[i]
-        if file.startswith(sparkpath):
+        if os.path.dirname(file) == sparkpath:
             first_spark_frame = i
             break
     if first_spark_frame == 0:
@@ -442,8 +442,8 @@ class RDD(object):
         """
         Return a list that contains all of the elements in this RDD.
         """
-        with _JavaStackTrace(self.context) as st:
-          bytesInJava = self._jrdd.collect().iterator()
+        with _JavaStackTrace(self.context):
+            bytesInJava = self._jrdd.collect().iterator()
         return list(self._collect_iterator_through_file(bytesInJava))
 
     def _collect_iterator_through_file(self, iterator):
@@ -624,7 +624,7 @@ class RDD(object):
         # TODO(shivaram): Similar to the scala implementation, update the take 
         # method to scan multiple splits based on an estimate of how many elements 
         # we have per-split.
-        with _JavaStackTrace(self.context) as st:
+        with _JavaStackTrace(self.context):
             for partition in range(mapped._jrdd.splits().size()):
                 partitionsToTake = self.ctx._gateway.new_array(self.ctx._jvm.int, 1)
                 partitionsToTake[0] = partition
@@ -808,7 +808,7 @@ class RDD(object):
                 yield outputSerializer.dumps(items)
         keyed = PipelinedRDD(self, add_shuffle_key)
         keyed._bypass_serializer = True
-        with _JavaStackTrace(self.context) as st:
+        with _JavaStackTrace(self.context):
             pairRDD = self.ctx._jvm.PairwiseRDD(keyed._jrdd.rdd()).asJavaPairRDD()
             partitioner = self.ctx._jvm.PythonPartitioner(numPartitions,
                                                           id(partitionFunc))
