@@ -707,20 +707,20 @@ class SparkContext(
    * Support function for API backtraces.
    */
   def setCallSite(site: String) {
-    setLocalProperty("externalCallSite", site)
+    setLocalProperty("spark.externalCallSite", site)
   }
 
   /**
    * Support function for API backtraces.
    */
   def clearCallSite() {
-    setLocalProperty("externalCallSite", null)
+    setLocalProperty("spark.externalCallSite", null)
   }
 
   private[spark] def getCallSite(): String = {
-    val callSite = getLocalProperty("externalCallSite")
-    if (callSite == null) return Utils.formatSparkCallSite
-    callSite
+    val callSite = getLocalProperty("spark.externalCallSite")
+    if (callSite != null) callSite
+    else Utils.formatSparkCallSite
   }
 
   /**
