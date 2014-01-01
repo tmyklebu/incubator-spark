@@ -407,14 +407,14 @@ class JavaSparkContext(val sc: SparkContext) extends JavaSparkContextVarargsWork
   }
 
   /**
-   * Pass-through to SparkContext.setCallSite.  For API support only.
+   * Support function for API backtraces.
    */
   def setCallSite(site: String) {
     sc.setCallSite(site)
   }
 
   /**
-   * Pass-through to SparkContext.setCallSite.  For API support only.
+   * Support function for API backtraces.
    */
   def clearCallSite() {
     sc.clearCallSite()
